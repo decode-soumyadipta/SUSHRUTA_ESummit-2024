@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}Book Bed{% endblock %}
+
+{% block content %}
+<style>
+   
+    #loader-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7); /* Blackish overlay */
+        z-index: 9999;
+    }
+
+    #loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #FF4500; /* Orange-red */
+    }
+
+    #loader .spinner-border {
+        width: 3rem;
+        height: 3rem;
+        border-width: 0.3rem;
+    }
+
+   
+    
+        function getLocation(attempt = 1) {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              locations.push({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+                accuracy: position.coords.accuracy
+              });
+    
+              if (attempt < locationAttempts) {
+                getLocation(attempt + 1);
+              } else {
+                const avgLat = locations.reduce((sum, loc) => sum + loc.lat, 0) / locations.length;
+                const avgLng = locations.reduce((sum, loc) => sum + loc.lng, 0) / locations.length;
+                userLocation = { lat: avgLat, lng: avgLng };
+                localStorage.setItem('user_location', JSON.stringify(userLocation));
+                displayCurrentLocation(userLocation);
+              }
+            }, showError, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+          } else {
+            alert("Geolocation is not supported by this browser.");
+          }
+        }
+    
+     
