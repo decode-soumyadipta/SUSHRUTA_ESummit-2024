@@ -49,11 +49,11 @@ To set up the project locally:
 
 ```bash
 
-git clone https://github.com/decode-soumyadipta/HOSPITELL_Sushruta.git
+git clone https://github.com/decode-soumyadipta/SUSHRUTA_ESummit-2024.git
 ```
 2. Navigate to the project directory:
 ```bash
-cd HOSPITELL_Sushruta
+cd SUSHRUTA_ESummit-2024
 ```
 3. Install the required dependencies:
 ```bash
