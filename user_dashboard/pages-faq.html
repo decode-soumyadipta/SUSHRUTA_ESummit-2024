@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block title %}FAQ{% endblock %}
+
+{% block content %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>FAQs</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('user_bp.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item active">Frequently Asked Questions</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    <section class="section faq">
+      <div class="row">
+        <div class="col-lg-6">
+    
+          <div class="card basic">
+            <div class="card-body">
+              <h5 class="card-title">Basic Questions</h5>
+    
+              <div>
+                <h6>1. What information do I need to provide before booking a doctor appointment?</h6>
+                <p>You are required to provide thorough information about your health records, medical condition, current medication, and so forth. If you are referred to the hospital by a doctor in your residing area, it is recommended to bring along the contact details of the doctor to your scheduled appointment.</p>
+              </div>
+    
+              <div class="pt-2">
+                <h6>2. How can I book a medical appointment?</h6>
+                <p>You can schedule an appointment at <website URL> to schedule a medical appointment or Online Consultation at <website URL> and learn more about the hospitals. Alternatively, you can fill in the form at our Reach Us section.</p>
+              </div>
+    
+              <div class="pt-2">
+                <h6>3. How can I get queue number of my doctor appointment?</h6>
+                <p>Once you have booked a medical appointment, you will be assigned a queue number based on parameters like emergency quota, senior citizen and first in first out. </p>
+              </div>
+    
+            </div>
+          </div>
+    
+         
+    
+        </div>
+    
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  {% endblock %}
