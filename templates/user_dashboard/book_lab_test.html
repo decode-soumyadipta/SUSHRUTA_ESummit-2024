@@ -1,0 +1,177 @@
+{% extends "layout.html" %}
+{% block title %}Book Lab Test{% endblock %}
+{% block content %}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Book Lab Test</h1>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Lab Test Booking Form -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Book a Lab Test</h5>
+
+                        <div class="card mb-4" style="background-color: #f7d9d29f;border: solid; border-color: red; border-width: 1px;">
+                            <div class="card-body">
+                                <h5 class="card-title text-center" style="color: orangered;">Search for a Lab Test</h5>
+                                <div class="input-group">
+                                    <!-- Lens Icon -->
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="search-icon" style="height: 65%; margin-top: 21px;"><i class="bi bi-search"></i></span>
+                                    </div>
+                                    <input type="text" id="searchTest" class="form-control" placeholder="Search tests..." autocomplete="off" aria-describedby="search-icon">
+                                </div>
+                                <div id="testSuggestions" class="list-group mt-2"></div>
+                            </div>
+                        </div>
+                        
+                        
+
+                        <form method="POST" action="{{ url_for('user_bp.book_lab_test') }}" enctype="multipart/form-data">
+                            <!-- Department Dropdown (Includes hospital name in brackets) -->
+                            <div class="form-group">
+                                <label for="department">Select Department</label>
+                                <select name="department" id="department" class="form-control" required>
+                                    <option value="">-- Select Department --</option>
+                                    {% for department in unique_departments %}
+                                        <option value="{{ department.id }}">{{ department.name }} (HOSPITAL- {{ department.hospital_name }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Hidden input for hospital_id -->
+                            <input type="hidden" name="hospital" id="hospital_id" />
+
+                            <!-- Test Dropdown (Populated dynamically based on department) -->
+                            <div class="form-group">
+                                <label for="test">Select Test</label>
+                                <select name="test" id="test" class="form-control" required>
+                                    <option value="">-- Select Test --</option>
+                                </select>
+                            </div>
+
+                            <!-- Test Price (Displayed dynamically based on selection) -->
+                            <div class="form-group">
+                                <label for="price">Test Price (₹)</label>
+                                <input type="text" name="price" id="price" class="form-control" readonly>
+                            </div>
+
+                            <!-- Booking Date -->
+                            <div class="form-group">
+                                <label for="booking_date">Select Booking Date</label>
+                                <input type="date" name="booking_date" id="booking_date" class="form-control" required>
+                            </div>
+
+                            <!-- Prescription Upload -->
+                            <div class="form-group">
+                                <label for="prescription">Upload Prescription (PDF, JPG, PNG)</label>
+                                <input type="file" name="prescription" id="prescription" class="form-control" required>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary">Book Lab Test</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchTest = document.getElementById('searchTest');
+        const testSuggestions = document.getElementById('testSuggestions');
+
+        // Search bar logic for test recommendations
+        searchTest.addEventListener('input', function () {
+            const query = this.value;
+            if (query.length > 2) {  // Search after typing 3 characters
+                fetch(`/search_tests/${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        testSuggestions.innerHTML = '';  // Clear previous suggestions
+                        data.forEach(item => {
+                            const suggestion = document.createElement('a');
+                            suggestion.href = '#';
+                            suggestion.classList.add('list-group-item', 'list-group-item-action');
+                            suggestion.innerHTML = `${item.name} (HOSPITAL- ${item.hospital_name}) - ₹${item.price}`;
+                            suggestion.addEventListener('click', function () {
+                                autoFillForm(item);
+                                testSuggestions.innerHTML = '';  // Clear suggestions
+                            });
+                            testSuggestions.appendChild(suggestion);
+                        });
+                    });
+            } else {
+                testSuggestions.innerHTML = '';  // Clear suggestions if query is too short
+            }
+        });
+
+        // Auto-fill the form when a suggestion is clicked
+        function autoFillForm(item) {
+            // Set the department dropdown based on the selected test
+            document.getElementById('department').value = item.department_id;
+            // Update hidden hospital_id field
+            document.getElementById('hospital_id').value = item.hospital_id;
+
+            // Update the test dropdown
+            const testDropdown = document.getElementById('test');
+            testDropdown.innerHTML = `<option value="${item.test_id}">${item.name}</option>`;
+            testDropdown.value = item.test_id;  // Auto-select the test
+
+            // Set the price field
+            document.getElementById('price').value = item.price;
+        }
+
+        // Fetch tests when a department is selected (manual selection)
+        document.getElementById('department').addEventListener('change', function() {
+            const departmentId = this.value;
+            if (departmentId) {
+                // Fetch hospital_id associated with the department
+                fetch(`/get_hospital_by_department/${departmentId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.hospital_id) {
+                            document.getElementById('hospital_id').value = data.hospital_id;  // Set the hidden hospital_id
+                        }
+
+                        // Fetch the tests related to the department
+                        fetch(`/get_tests_by_department/${departmentId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const testDropdown = document.getElementById('test');
+                                testDropdown.innerHTML = '<option value="">-- Select Test --</option>';
+
+                                data.tests.forEach(test => {
+                                    testDropdown.innerHTML += `<option value="${test.id}">${test.name}</option>`;
+                                });
+                            });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching hospital:', error);
+                    });
+            }
+        });
+
+        // Fetch and display the price of the test when selected manually
+        document.getElementById('test').addEventListener('change', function() {
+            const testId = this.value;
+            if (testId) {
+                fetch(`/get_test_price/${testId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('price').value = data.price;
+                    });
+            }
+        });
+    });
+</script>
+
+{% endblock %}
