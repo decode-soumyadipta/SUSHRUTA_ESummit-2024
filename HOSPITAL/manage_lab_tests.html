@@ -1,0 +1,113 @@
+<!-- templates/HOSPITAL/manage_lab_tests.html -->
+{% extends "HOSPITAL/hospital_base_layout.html" %}
+{% block title %}Manage Lab Tests{% endblock %}
+{% block content %}
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Manage Lab Tests</h1>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <!-- Add New Lab Test -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Add New Lab Test</h5>
+
+                        <form method="POST" action="{{ url_for('hospital_bp.manage_lab_tests') }}" enctype="multipart/form-data">
+                            <!-- Test Category Dropdown -->
+                            <div class="form-group">
+                                <label for="category">Test Category</label>
+                                <select name="category" id="category" class="form-control" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Pathology">Pathology</option>
+                                    <option value="Radiology">Radiology</option>
+                                    <option value="Chemographic">Chemography</option>
+                                    <option value="Chemographic">Microbiology</option>
+                                    <option value="Chemographic">Hematology</option>
+                                    <option value="Chemographic">Cytology</option>
+                                    <option value="Chemographic">Genetics</option>
+                                    <option value="Chemographic">Cardiology</option>
+                                    
+                                </select>
+                            </div>
+
+                            <!-- Test Sub-Category Dropdown -->
+                            <div class="form-group">
+                                <label for="test_name">Test Name</label>
+                                <select name="test_name" id="test_name" class="form-control" required>
+                                    <!-- Subcategories will be dynamically populated here -->
+                                </select>
+                            </div>
+
+                            <!-- Hospital Dropdown (populated based on selected test) -->
+                            <div class="form-group">
+                                <label for="hospital_id">Available Hospitals</label>
+                                <select name="hospital_id" id="hospital_id" class="form-control" required>
+                                    {% for hospital in hospitals %}
+                                        <option value="{{ hospital.id }}">{{ hospital.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- File Uploader for Prescription -->
+                            <div class="form-group">
+                                <label for="prescription">Upload Prescription (PDF, JPG, PNG)</label>
+                                <input type="file" name="prescription" id="prescription" class="form-control" accept=".pdf, .jpg, .jpeg, .png" required>
+                            </div>
+
+                            <!-- Submit Form -->
+                            <button type="submit" class="btn btn-primary">Book Test</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<script>
+    // Test categories and subcategories data
+    const testCategories = {
+        "Pathology": [
+            {"name": "Biopsy", "price": "8000"},
+            {"name": "Blood tests", "price": "800"},
+            {"name": "Urinalysis", "price": "400"},
+            // Add more Pathology tests here
+        ],
+        "Radiology": [
+            {"name": "X-ray", "price": "800"},
+            {"name": "CT Scan", "price": "7000"},
+            {"name": "MRI", "price": "13000"},
+            // Add more Radiology tests here
+        ],
+        "Chemographic": [
+            {"name": "Complete Blood Count (CBC)", "price": "4000"},
+            {"name": "Liver Function Tests", "price": "1200"},
+            {"name": "Kidney Function Tests", "price": "1500"},
+            // Add more Chemographic tests here
+        ]
+    };
+
+    // Populate the test_name dropdown based on the selected category
+    document.getElementById('category').addEventListener('change', function() {
+        const selectedCategory = this.value;
+        const testNameDropdown = document.getElementById('test_name');
+        testNameDropdown.innerHTML = ''; // Clear previous options
+
+        if (selectedCategory && testCategories[selectedCategory]) {
+            testCategories[selectedCategory].forEach(test => {
+                const option = document.createElement('option');
+                option.value = test.name;
+                option.textContent = `${test.name}: ₹${test.price}`;
+                testNameDropdown.appendChild(option);
+            });
+        }
+    });
+</script>
+{% endblock %}
