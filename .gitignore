@@ -1,0 +1,10 @@
+# Ignore virtual environment folder
+venv/
+.venv/
+
+config.json
+config.json
+bin/solc-output-compile-all.json
+bin/contracts/MedicalData-solc-output.json
+
+config.json
