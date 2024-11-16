@@ -1,2 +1,2 @@
-# HOSPITELL_sushruta
- This is our ptoject folder
+# HOSPITELL by Team- Sushruta
+ This is our project folder
