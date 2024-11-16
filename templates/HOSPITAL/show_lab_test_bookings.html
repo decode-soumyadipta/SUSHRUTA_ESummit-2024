@@ -1,0 +1,176 @@
+{% extends "HOSPITAL/hospital_base_layout.html" %}
+{% block title %}Lab Test Bookings{% endblock %}
+{% block content %}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Lab Test Bookings</h1>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <!-- Date Filter Form -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Filter by Date</h5>
+                        <form method="GET" action="{{ url_for('hospital_bp.show_lab_test_bookings') }}">
+                            <div class="input-group">
+                                <input type="date" name="filter_date" class="form-control" value="{{ request.args.get('filter_date', '') }}" required>
+                                <button type="submit" class="btn btn-primary" style="margin-top: 21px;">Filter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Lab Test Bookings List -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Bookings</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sl no.</th>
+                                    <th>Patient Name</th>
+                                    <th>Test Category</th>
+                                    <th>Test Name</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                               </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in bookings %}
+                                    <tr id="booking-row-{{ booking.id }}" class="{% if booking.status == 'DONE' %}table-success{% endif %}">
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ booking.user.name }}</td>
+                                        <td>{{ booking.test_category }}</td>
+                                        <td>{{ booking.test_name }}</td>
+                                        <td>{{ booking.booking_date }}</td>
+                                        
+                                        <td id="status-{{ booking.id }}">
+                                            {% if booking.status == 'CheckedIn' %}
+                                                <span class="text-success">Checked In</span>
+                                            {% elif booking.status == 'Cancelled' %}
+                                                <span class="text-danger">Cancelled</span>
+                                            {% elif booking.status == 'DONE' %}
+                                                <span class="text-success">Test Done</span>
+                                            {% else %}
+                                                <span class="text-warning">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if booking.status == 'Pending' %}
+                                                <button class="btn btn-primary btn-sm" id="verify-btn-{{ booking.id }}" onclick="showVerificationField({{ booking.id }})">Verify</button>
+                                                <div id="verification-field-{{ booking.id }}" class="verification-field" style="display: none;">
+                                                    <input type="text" id="booking-code-{{ booking.id }}" placeholder="Enter booking code">
+                                                    <button class="btn btn-success btn-sm" onclick="verifyCode({{ booking.id }})">Submit</button>
+                                                </div>
+                                            {% elif booking.status == 'Cancelled' %}
+                                                <span class="badge bg-danger">Cancelled</span>
+                                                {% elif booking.status == 'DONE' %}
+                                                <span class="badge bg-success">Test Done</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Checked-In Patients List -->
+             <!-- Checked-In Patients List -->
+<div class="card mt-4">
+    <div class="card-body" style="background-color: rgba(0, 128, 0, 0.575);">
+        <h5 class="card-title" style="color: white;">Checked-In Patients for {{ selected_date }}</h5>
+        {% if checked_in_patients %}
+            <table class="table table-bordered" id="checked-in-patients">
+                <thead>
+                    <tr>
+                        <th>Sl no.</th>
+                        <th>Patient Name</th>
+                        <th>Test Category</th>
+                        <th>Test Name</th>
+                        <th>Booking Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in checked_in_patients %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ patient.user.name }}</td>
+                            <td>{{ patient.test_category }}</td>
+                            <td>{{ patient.test_name }}</td>
+                            <td>{{ patient.booking_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No checked-in patients for this date.</p>
+        {% endif %}
+    </div>
+</div>
+
+            </div>
+        </div>
+    </section>
+</main>
+<script>
+    function showVerificationField(bookingId) {
+        document.getElementById(`verification-field-${bookingId}`).style.display = 'block';
+    }
+
+    function verifyCode(bookingId) {
+        const bookingCode = document.getElementById(`booking-code-${bookingId}`).value;
+        fetch(`/verify_test_booking_code/${bookingId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ booking_code: bookingCode })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update booking status to "Checked In" in the main table
+                document.getElementById(`status-${bookingId}`).innerHTML = '<span class="text-success">Checked In</span>';
+                alert('Booking code verified successfully!');
+                
+                // Hide verification input and button
+                document.getElementById(`verification-field-${bookingId}`).style.display = 'none';
+                document.getElementById(`verify-btn-${bookingId}`).style.display = 'none';
+
+                // Update checked-in patients list
+                updateCheckedInPatientsList(data.checked_in_patients);
+            } else {
+                alert('Invalid booking code.');
+            }
+        })
+        .catch(error => {
+            
+            console.error('Error:', error);
+        });
+    }
+
+    function updateCheckedInPatientsList(checkedInPatients) {
+        const checkedInList = document.querySelector('#checked-in-patients tbody');
+        checkedInList.innerHTML = ''; // Clear current list
+
+        checkedInPatients.forEach((patient, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${patient.user_name}</td>
+                <td>${patient.test_category}</td>
+                <td>${patient.test_name}</td>
+                <td>${patient.booking_date}</td>
+            `;
+            checkedInList.appendChild(row);
+        });
+    }
+</script>
+
+{% endblock %}
