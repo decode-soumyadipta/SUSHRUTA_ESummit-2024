@@ -1,0 +1,64 @@
+{% extends "HOSPITAL/hospital_base_layout.html" %}
+{% block title %}Medicine Inventory{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Medicine Inventory for {{ hospital.name }}</h1>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Add Medicine Type</h5>
+                        <form method="POST" action="{{ url_for('hospital_bp.medicine_inventory') }}">
+                            <div class="form-group">
+                                <label for="name">Medicine Name</label>
+                                <input type="text" id="name" name="name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="threshold">Stock Threshold</label>
+                                <input type="number" id="threshold" name="threshold" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" class="form-control"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-2">Add Medicine Type</button>
+                        </form>
+
+                        <h6 class="mt-4">Current Inventory</h6>
+                        <!-- Search Bar -->
+                        <input type="text" id="medicineSearch" placeholder="Search Medicines" onkeyup="filterMedicines()" class="form-control mb-3">
+                        
+                        <!-- Medicines List -->
+                        <ul id="medicineList" class="list-group">
+                            {% for medicine in medicines %}
+                                <li class="list-group-item">
+                                    <a href="{{ url_for('hospital_bp.medicine_detail', medicine_id=medicine.id) }}">{{ medicine.name }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+function filterMedicines() {
+    let input = document.getElementById('medicineSearch');
+    let filter = input.value.toLowerCase();
+    let ul = document.getElementById("medicineList");
+    let li = ul.getElementsByTagName('li');
+
+    for (let i = 0; i < li.length; i++) {
+        let a = li[i].getElementsByTagName("a")[0];
+        let txtValue = a.textContent || a.innerText;
+        li[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? "" : "none";
+    }
+}
+</script>
+{% endblock %}
