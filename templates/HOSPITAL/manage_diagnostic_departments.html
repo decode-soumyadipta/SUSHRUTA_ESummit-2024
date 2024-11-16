@@ -1,0 +1,90 @@
+<!-- templates/HOSPITAL/manage_diagnostic_departments.html -->
+{% extends "HOSPITAL/hospital_base_layout.html" %}
+{% block title %}Manage Diagnostic Departments{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Manage Diagnostic Departments</h1>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Add Diagnostic Department Form -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Add Diagnostic Department and Tests</h5>
+
+                        <form method="POST" action="{{ url_for('hospital_bp.manage_diagnostic_departments') }}">
+                            <!-- Diagnostic Department Dropdown -->
+                            <div class="form-group">
+                                <label for="department_name">Select Diagnostic Department</label>
+                                <select name="department_name" id="department_name" class="form-control" required>
+                                    <option value="Pathology">Pathology</option>
+                                    <option value="Radiology">Radiology</option>
+                                    <option value="Chemographic">Chemography</option>
+                                    <option value="Microbiology">Microbiology</option>
+                                    <option value="Hematology">Hematology</option>
+                                    <option value="Cytology">Cytology</option>
+                                    <option value="Genetics">Genetics</option>
+                                    <option value="Cardiology">Cardiology</option>
+                                </select>
+                            </div>
+
+                            <!-- Test Name -->
+                            <div class="form-group">
+                                <label for="test_name">Test Name</label>
+                                <input type="text" name="test_name" id="test_name" class="form-control" placeholder="Enter Test Name" required>
+                            </div>
+
+                            <!-- Test Price -->
+                            <div class="form-group">
+                                <label for="price">Test Price (₹)</label>
+                                <input type="text" name="price" id="price" class="form-control" placeholder="Enter Price" required>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary">Add Department & Test</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Display Existing Diagnostic Departments and Tests -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Existing Diagnostic Departments</h5>
+
+                        {% if departments %}
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Department</th>
+                                        <th>Tests</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for department in departments %}
+                                        <tr>
+                                            <td>{{ department.name }}</td>
+                                            <td>
+                                                <ul>
+                                                    {% for test in department.tests %}
+                                                        <li>{{ test.name }} - ₹{{ test.price }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p>No diagnostic departments found.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock %}
