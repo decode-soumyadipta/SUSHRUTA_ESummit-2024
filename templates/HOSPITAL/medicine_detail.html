@@ -1,0 +1,127 @@
+{% extends "HOSPITAL/hospital_base_layout.html" %}
+{% block title %}{{ medicine.name }} Details{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>{{ medicine.name }} Details</h1>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card bg-primary text-white mb-4"></div>
+                    <div class="card-body text-center">
+                        <h2>Total Stock: <strong>{{ medicine.total_stock }}</strong></h2>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Add New Batch</h5>
+                        <form method="POST" action="{{ url_for('hospital_bp.medicine_detail', medicine_id=medicine.id) }}">
+                            <div class="form-group">
+                                <label for="supplier">Supplier</label>
+                                <input type="text" id="supplier" name="supplier" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expiration_date">Expiration Date</label>
+                                <input type="date" id="expiration_date" name="expiration_date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="stock_added">Stock Added</label>
+                                <input type="number" id="stock_added" name="stock_added" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="note">Note</label>
+                                <textarea id="note" name="note" class="form-control"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-2">Add Batch</button>
+                        </form>
+                          <!-- Form to Enter Sold Units -->
+           <br><br> <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-body" style=" border: #dc3545 solid 1px;">
+                        <h5 class="card-title">Enter Sold Units</h5>
+                        <form method="POST" action="{{ url_for('hospital_bp.update_medicine_stock', medicine_id=medicine.id) }}">
+                            <div class="form-group">
+                                <label for="change_amount">Sold Units:</label>
+                                <input type="number" id="change_amount" name="change_amount" class="form-control" placeholder="Enter units sold" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="note">Note:</label>
+                                <input type="text" id="note" name="note" class="form-control" placeholder="Optional note">
+                            </div>
+                            <button type="submit" class="btn btn-danger mt-3">Update Stock</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+               <!-- Medicine Batch Timeline Visualization -->
+               <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Medicine Stock Timeline</h5>
+                        <div class="timeline">
+                            {% if logs %}
+                                <ul class="timeline-list">
+                                    {% for log in logs %}
+                                        <li class="timeline-item">
+                                            <span class="dot {{ 'dot-green' if log.change_type == 'added' else 'dot-red' }}"></span>
+                                            <div class="timeline-content">
+                                                <h6>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</h6>
+                                                <p>{{ log.change_type | title }}: {{ log.change_amount }} units</p>
+                                                {% if log.note %}<p>Note: {{ log.note }}</p>{% endif %}
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>No stock history available.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<style>
+    /* Timeline CSS */
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-list {
+    list-style: none;
+    padding: 0;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.dot-green {
+    background-color: #28a745;
+}
+
+.dot-red {
+    background-color: #dc3545;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+}
+</style>
+{% endblock %}
