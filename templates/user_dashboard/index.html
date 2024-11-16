@@ -4,7 +4,7 @@
 
 {% block content %}
 <style>
-   
+   #no-load
     #loader-overlay {
         display: none;
         position: fixed;
@@ -32,7 +32,7 @@
     }
 
    
-    
+ 
         function getLocation(attempt = 1) {
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -57,4 +57,3 @@
           }
         }
     
-     

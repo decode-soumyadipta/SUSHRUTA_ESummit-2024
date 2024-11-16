@@ -118,5 +118,6 @@ if local_server:
     app.config['SQLALCHEMY_DATABASE_URI'] = config_params['local_uri']
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = config_params['prod_uri']
+    #using uri
 
 db.init_app(app)
