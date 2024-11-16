@@ -6,7 +6,7 @@ We're building HOSPITELL, a one stop web-solution that help Hospitals to manage 
 patients and OPD management, with an integrated AI- Chatbot that will enhance patient's as well as Hospital Admin's 
 experience. 
 Our vision- Effortless Bed & OPD Management: Instant Availability for Patients, Streamlined Control for Hospitals 
-supercharged by AI Captain (ResQ)
+supercharged by AI Captain (Aaroghya)
 
 
 ![Hospitell ](https://github.com/user-attachments/assets/b67f4445-039a-4831-8710-85fbf63cebdc)
