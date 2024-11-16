@@ -86,11 +86,6 @@ We welcome contributions from the community! To contribute:
     4. Push to the branch (git push origin feature-branch).
     5. Create a pull request.
 
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-[MIT](https://github.com/decode-soumyadipta/HOSPITELL_Sushruta/blob/2ba6b933e6195a7563aa4abc4d522d85f348f9da/LICENSE)
-
 
 ## Contact
 
@@ -98,6 +93,5 @@ This project is licensed under the MIT License. See the LICENSE file for details
     @soumyadiptadey7@gmail.com
     @ashmitamazumdar2005@gmail.com
     @arjyadeep005@gmail.com
-    @sabarnaofficial@gmail.com
     @rayjitaditya20@gmail.com
-    @arnab29g05@gmail.com
+
