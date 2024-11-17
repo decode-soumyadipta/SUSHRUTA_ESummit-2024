@@ -324,7 +324,7 @@ def nearby_hospitals():
         user_location = (float(user_lat), float(user_lng))
         distance = great_circle(user_location, hospital_location).kilometers
 
-        if distance <= 5:
+        if distance <= 4:
             # Sum all ready beds across all wards for this hospital
             icu_beds_ready = Bed.query.join(Ward).filter(
                 Bed.bed_type == 'ICU',
