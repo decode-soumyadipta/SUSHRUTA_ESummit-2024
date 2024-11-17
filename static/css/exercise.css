@@ -1,0 +1,57 @@
+form {
+    margin-bottom: 1;
+}
+
+.exercises-table {
+    overflow-x: auto; /* Enable horizontal scrolling for small screens */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.exercise-image {
+    max-width: 100px;
+    height: auto;
+    display: block;
+    margin: auto;
+}
+
+.exercise-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+button[type="submit"] {
+    background-color: orangered; /* Blue color */
+    color: white;
+    border: none;
+   
+    padding-bottom: 5px;
+    padding-top: 9px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+button[type="submit"]:hover {
+    background-color: red; /* Darker blue color */
+}
+
+button[type="submit"]:focus {
+    outline: none; /* Remove focus outline */
+}
